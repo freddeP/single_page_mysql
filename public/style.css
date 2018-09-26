@@ -65,6 +65,11 @@ main{
     padding:1%;
 
 }
+.todoContent
+{
+padding:2%;
+border-bottom:1px dashed #999;
+}
 
 footer{
     min-height: 20vh;
