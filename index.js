@@ -1,6 +1,6 @@
 const express = require("express");
 const mysql = require('mysql');
-
+const validate = require('./middleware/validate');
 //mysql - connection
 var con = mysql.createConnection({
   host     : 'localhost',
@@ -19,10 +19,10 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 
 
-app.post("/createTodo", function(req,res){
+app.post("/createTodo",validate, function(req,res){
     // first validate and sanitize the body...
     // later...
-    insertTodo(req.body.todo);
+    insertTodo(req.body);
     res.redirect("/?redirected");
 });
 
@@ -42,11 +42,15 @@ app.listen(3000, function (){
 
 
 
-function insertTodo(todo){
+function insertTodo(input){
 
-    const q1 = "INSERT INTO todo (post) VALUES (?)"
+    const post = input.todo;
+    const author = input.author;
+    const q1 = "INSERT INTO todo (post,author) VALUES (?)"
 
-    con.query(q1,todo,function(err, result){ 
+    const inputArr = [post, author];
+
+    con.query(q1,[inputArr],function(err, result){ 
         if (err) console.log(err);
         else console.log(result);
      }); 

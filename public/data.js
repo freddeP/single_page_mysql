@@ -13,31 +13,28 @@ function getAllTodos(){
       return response.json();
     })
     .then(function(myJson) {
-      
-        updateDom(myJson);
-
+        updateTodos(myJson);
     });
 }
 
 
 
-function updateDom(content)
+function updateTodos(content)
 {
+    console.log(content);
     let revContent = content.reverse();
-
     revContent.forEach(element => {
         
-  
     let template = `
-    <h2>${element.date.split("T")[0]}</h2>
-    <p> 
-        ${element.post}  
-    </p>`;
+        <h2>${element.date.split("T")[0]}</h2>
+        <p> 
+            ${element.post}  
+        </p>
+        <a href = '/deletePost?id=${element.id}'>delete this</a>`;
     
     let newContainer = document.createElement('div');
     newContainer.className = "todoContent";
     newContainer.innerHTML = template;
-
 
     document.getElementById("allPosts").appendChild(newContainer);
     });

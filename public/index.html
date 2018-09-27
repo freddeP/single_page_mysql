@@ -35,7 +35,9 @@
         <div class="mainContent visible">
             
             <form action="/createTodo" method="post" >
-                <textarea name="todo" placeholder="what to do?" ></textarea>
+                <input type="text" name="author" placeholder="author" required>
+                <textarea name="todo" placeholder="what to do?" required ></textarea>
+                
                 <input type="submit" value="save">
             </form>
             <div id = "allPosts">
