@@ -28,12 +28,37 @@ app.post("/createTodo",validate, function(req,res){
 
 app.get("/getAllTodos", function(req,res){
 
-    const q2 = "SELECT * FROM todo";
-    con.query(q2, function(err, result){
+        const q2 = "SELECT * FROM todo";
+        con.query(q2, function(err, result){
         res.send(JSON.stringify(result));
+
     });
 
 });
+
+
+app.get("/deletePost",function(req,res){
+
+   const id = parseInt(req.query.id);
+   let q = "DELETE FROM todo WHERE id = ?";
+   con.query(q,id,function(err, result){
+       if(err) console.log(err);
+       else console.log(result);
+       res.redirect("/?post:"+id+"deleted");
+   });
+});
+
+
+app.post("/updateTodo",validate,function(req,res){
+
+    let q = "UPDATE todo SET author = ?, post = ? WHERE id = ?";
+    con.query(q,[req.body.author,req.body.todo,req.body.id], function(err, result){
+        if(err) console.log(err);
+        else console.log(result);
+        res.redirect("/?updated");
+    });
+
+})
 
 
 app.listen(3000, function (){

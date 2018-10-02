@@ -40,6 +40,8 @@
                 
                 <input type="submit" value="save">
             </form>
+
+
             <div id = "allPosts">
             </div>
         </div>
@@ -49,6 +51,17 @@
     <footer>
         <h3>copyright &copy; fp 2018</h3>
     </footer>
+
+
+<div class="update hidden">
+    <form action="/updateTodo" method="post" >
+        <input id = "author" type="text" name="author" placeholder="author" required>
+        <textarea id = "todo" name="todo" placeholder="what to do?" required ></textarea>
+        <input type="hidden" name="id" id = "id">
+        <input type="submit" value="update">
+    </form>
+</div>
+
 
 </body>
 </html>
