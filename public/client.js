@@ -69,6 +69,7 @@ function setCsrfCookie()
     csrf = csrf.split("?csrf=");
     if(csrf.length===2){
         csrf = csrf[1];
+        csrf = decodeURI(csrf);
         document.cookie = "csrf="+csrf;
         console.log(document.cookie);
     }

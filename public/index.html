@@ -19,8 +19,8 @@
             <ul>
                 <li class = "menu" >home</li>
                 <li class = "menu">todo</li>
-                <li class = "menu">faq</li>
-                <li class = "menu">chat</li>               
+                <li class = "menu">login</li>
+                <li class = "menu">create user</li>               
             </ul>
         </nav>
 
@@ -45,8 +45,23 @@
             <div id = "allPosts">
             </div>
         </div>
-        <div class="mainContent">3</div>
-        <div class="mainContent">4</div>
+        <div class="mainContent">
+                <form action="/login" method="post">
+                    <input type="email" name="email" placeholder="email">
+                    <br>
+                    <input type="password" name="password" placeholder="password">
+                    <input type="submit" value="log in">
+                </form>
+        </div>
+        <div class="mainContent">
+                <form action="/createUser" method="post">
+                    <input type="email" name="email" placeholder="email" required>
+                    <br>
+                    <input type="password" name="password" placeholder="password" required>
+                    <input type="submit" value="create user">
+                </form>
+
+        </div>
     </main>
     <footer>
         <h3>copyright &copy; fp 2018</h3>

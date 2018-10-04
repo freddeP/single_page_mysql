@@ -10,26 +10,6 @@ const jwt = require("jsonwebtoken");
 const csrf = "asöjldfkjasödflkasdjöflkjasdf2#";
 
 
-
-// test user
-
-const userEmail = "fp@fp.se";
-let userPassword = "testing";
-
-bcrypt.genSalt(12).then(function(value){
-    let salt = value;
-    
-    bcrypt.hash(userPassword,salt,function(err,hash){
-        console.log(hash);
-        userPassword = hash;
-    });
-})
-
-
-//end test user
-
-
-
 //mysql - connection
 var con = mysql.createConnection({
   host     : 'localhost',
@@ -50,6 +30,32 @@ app.use(cookieParser());
 
 
 
+app.get("/createUser", function(req,res){
+    res.sendFile(__dirname+"/html/createUser.html");
+});
+
+app.post("/createUser", function(req,res){
+  
+    const userEmail = req.body.email;
+    let userPassword = req.body.password;
+
+    bcrypt.genSalt(12).then(function(value){
+    let salt = value;
+        
+        bcrypt.hash(userPassword,salt,function(err,hash){
+            console.log(hash);
+            userPassword = hash;
+            // Nu är lösenordet hashat och vi skall spara till DB.
+            let q = "INSERT INTO users (email, password) VALUES (?,?)";
+            con.query(q,[userEmail,userPassword],function(err,result){
+                if(err) console.log(err);
+                else console.log(result); 
+                res.redirect("/?user_created");   
+            }); // end query
+        });// end hash
+    }); //end gen salt
+});  // end post createUser
+
 app.get("/login", function(req,res){
     res.sendFile(__dirname+"/html/login.html");
 });
@@ -59,19 +65,31 @@ app.post("/login", function(req,res){
     console.log(req.body.email);
     console.log(req.body.password);
 
+    let userEmail = req.body.email;
+    let userPassword = req.body.password;
     // här skall vi sanera html och validera inputs
 
-    if(req.body.email === userEmail)
-    {
-        // user exists check password
-        bcrypt.compare(req.body.password,userPassword,function(err,success){
+    // hitta användare i DB.
+    let q = "SELECT id,email,password,admin FROM users WHERE email = ?";
+    console.log(q);
+    con.query(q,[userEmail],function(err,result){
+        console.log(err);
+        console.log(result);
+     
+        if(result.length === 1)
+        {
+
+                 // user exists check password
+        bcrypt.compare(userPassword,result[0].password,function(err,success){
             if(success)
             {
 
                 // skapa token med jwt
 
-                const tempId =  Date.now();
-                const token = jwt.sign({id:tempId,email:req.body.email},"minhemlighet",{expiresIn : 60*3});
+                const tempId =  result[0].id;
+                const token = jwt.sign(
+                    {id:tempId, admin:result[0].admin},
+                    "minhemlighet",{expiresIn : 60*10});
                 console.log(token);
 
                 // skapa två cookies
@@ -95,8 +113,13 @@ app.post("/login", function(req,res){
         });
 
 
-    }
+        }
 
+    });
+
+
+
+   
 
 });
 
@@ -166,4 +189,5 @@ function insertTodo(input){
      }); 
 
 }
+
 
