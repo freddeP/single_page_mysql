@@ -4,7 +4,11 @@ const validate = require('./middleware/validate');
 const authUser = require('./middleware/authUser');
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
-//mysql - connection
+const jwt = require("jsonwebtoken");
+
+// csrf-cookie
+const csrf = "asöjldfkjasödflkasdjöflkjasdf2#";
+
 
 
 // test user
@@ -12,15 +16,13 @@ const bcrypt = require("bcryptjs");
 const userEmail = "fp@fp.se";
 let userPassword = "testing";
 
-bcrypt.genSalt(16).then(function(value){
+bcrypt.genSalt(12).then(function(value){
     let salt = value;
     
     bcrypt.hash(userPassword,salt,function(err,hash){
         console.log(hash);
         userPassword = hash;
     });
-
-
 })
 
 
@@ -28,7 +30,7 @@ bcrypt.genSalt(16).then(function(value){
 
 
 
-
+//mysql - connection
 var con = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
@@ -57,13 +59,38 @@ app.post("/login", function(req,res){
     console.log(req.body.email);
     console.log(req.body.password);
 
+    // här skall vi sanera html och validera inputs
+
     if(req.body.email === userEmail)
     {
         // user exists check password
         bcrypt.compare(req.body.password,userPassword,function(err,success){
             if(success)
             {
+
+                // skapa token med jwt
+
+                const tempId =  Date.now();
+                const token = jwt.sign({id:tempId,email:req.body.email},"minhemlighet",{expiresIn : 60*3});
+                console.log(token);
+
+                // skapa två cookies
+                
+                   //en cookie med vår token
+                    res.cookie("jwt-token",token,{
+                        httpOnly : true,
+                        secure : false, // obs skall vara true för https
+                        sameSite : true
+                    });
+                     //en cookie som clienten skall manipulera
+                    res.cookie("csrf", "123",
+                    {   httpOnly: false, 
+                        sameSite:true, 
+                        secure:false
+                    });
+
                 console.log("user logged in");
+                res.redirect("/?csrf="+csrf);
             }
         });
 

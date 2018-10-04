@@ -5,6 +5,10 @@ window.addEventListener("DOMContentLoaded",initJs);
 
 function initJs(){
 
+
+    setCsrfCookie();
+
+
     // lägg till lyssnare för menyknappar
     const menu = _arrClass("menu");
     menu.forEach(function(li){
@@ -54,4 +58,18 @@ function toggleContent(){
 // helpers
 function _arrClass(c){
     return Array.from(document.getElementsByClassName(c));
+}
+
+//CSRF
+function setCsrfCookie()
+{
+
+    let csrf = window.location.href;
+    console.log(typeof csrf);
+    csrf = csrf.split("?csrf=");
+    if(csrf.length===2){
+        csrf = csrf[1];
+        document.cookie = "csrf="+csrf;
+        console.log(document.cookie);
+    }
 }
